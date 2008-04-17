@@ -5,6 +5,8 @@ SSL requirement adds a declarative way of specifying that certain actions
 should only be allowed to run under SSL, and if they're accessed without it,
 they should be redirected.
 
+If the rails_env is test or development the redirection is not performed.
+
 Example:
 
   class ApplicationController < ActiveRecord::Base
