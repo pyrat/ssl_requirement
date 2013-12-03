@@ -51,6 +51,18 @@ module SslRequirement
       return true if ssl_allowed?
 
       if ssl_required? && !request.ssl?
+        if request.post?
+          ### since redirect_to is a "GET", if the request is posting data but 
+          # got intercepted by an ssl-enforcement, cache the data into the 
+          # session and pull 'em from the session after the ssl-redirecting
+          # To pull the data from the session after this ssl-redirecting:
+          #     params.merge!(session[:post_params])
+          # so the action where you pull this data is keeping its orginal and
+          # the session params
+          # (( remember: it's your resposibility here to clear the sessions 
+          # after being done ))
+          session[:post_params] = request.params
+        end
         redirect_to "https://" + request.host + request.request_uri
         flash.keep
         return false
